@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="900"
-        MinWidth="900" MinHeight="450" FontFamily="Hamburge-mous-tiv" FontSize="14" FontWeight="Bold">
+        MinWidth="900" MinHeight="450" FontFamily="Hamburge-mous-tiv" FontSize="16" FontWeight="Bold">
     <Window.Resources>
         <Style x:Key="ShapeButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="70"/>
-            <Setter Property="Height" Value="70"/>
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Height" Value="80"/>
             <Setter Property="ContentTemplate">
                 <Setter.Value>
                     <DataTemplate>
