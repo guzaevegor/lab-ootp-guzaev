@@ -44,5 +44,50 @@ namespace WpfApp1
         {
 
         }
+
+        private void Rectangle_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Ellipse_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Straight_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Circle_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Fractured_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ColorButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void FillButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ThicknessComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

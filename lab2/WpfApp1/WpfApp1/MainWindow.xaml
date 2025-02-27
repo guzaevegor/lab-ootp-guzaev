@@ -5,29 +5,132 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="900"
+        MinWidth="900" MinHeight="450" FontFamily="Hamburge-mous-tiv" FontSize="14" FontWeight="Bold">
+    <Window.Resources>
+        <Style x:Key="ShapeButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="70"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel>
+                            <!-- Привязка Source к Content кнопки -->
+                            <Image Source="{Binding}" Width="32" Height="32"/>
+                            <!-- Привязка Text к Tag кнопки -->
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Tag}" TextAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ColorButtonStyle" TargetType="Button">
+            <!-- Задаём размеры и отступы -->
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <!-- Определяем шаблон отображения -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="Black"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="BorderBrush" Value="DarkGray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderThumbStyle" TargetType="Thumb">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border CornerRadius="3" 
+            Background="{TemplateBinding Background}"
+            BorderBrush="Gray"
+            BorderThickness="1">
+                            <Rectangle Width="2" 
+                   Fill="White"
+                   Margin="1,3"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderRepeatButtonStyle" TargetType="RepeatButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernSliderStyle" TargetType="Slider">
+            <Setter Property="Background" Value="#FFE0E0E0"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="Foreground" Value="#FF0078D7"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid>
+                            <Track x:Name="PART_Track">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource SliderThumbStyle}"/>
+                                </Track.Thumb>
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderRepeatButtonStyle}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderRepeatButtonStyle}"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <!-- Main Menu -->
         <Menu Grid.Row="0">
-            <MenuItem Header="Файл" x:Name="FileMenu" FontFamily="Global User Interface" FontSize="14">
+            <MenuItem Header="Файл" x:Name="FileMenu" FontFamily="Hamburge-mous-tiv" FontSize="14" FontWeight="Bold">
                 <MenuItem Header="Открыть" x:Name="OpenMenuItem"
                   InputGestureText="Ctrl+O"
-                  FontFamily="Global User Interface" FontSize="14"
+                  FontFamily="Hamburge-mous-tiv"  FontSize="14"
                   Click="OpenMenuItem_Click"/>
                 <MenuItem Header="Сохранить" x:Name="SaveMenuItem"
-                  FontFamily="Global User Interface" FontSize="14"
+                  FontFamily="Hamburge-mous-tiv"  FontSize="14"
                   InputGestureText="Ctrl+S"
                   Click="SaveMenuItem_Click"/>
                 <Separator/>
-                <MenuItem Header="Выход" Click="ExitMenuItem_Click" FontFamily="Global User Interface" FontSize="14"/>
+                <MenuItem Header="Выход" Click="ExitMenuItem_Click" FontSize="14"/>
             </MenuItem>
-            <MenuItem Header="Помощь" FontFamily="Global User Interface" FontSize="14">
-                <MenuItem Header="О программе" Click="AboutMenuItem_Click" FontFamily="Global User Interface" FontSize="14"/>
+            <MenuItem Header="Помощь" FontFamily="Hamburge-mous-tiv"  FontSize="14" FontWeight="Bold">
+                <MenuItem Header="О программе" Click="AboutMenuItem_Click" FontSize="14" FontFamily="Hamburge-mous-tiv" />
             </MenuItem>
         </Menu>
 
@@ -35,20 +138,79 @@
         <Grid Grid.Row="1" Background="#FFE5E5E5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="93*"/>
-                <RowDefinition Height="322*"/>
+                <RowDefinition Height="139*"/>
+                <RowDefinition Height="276*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="211"/>
+                <!-- Этот столбец будет растягиваться -->
                 <ColumnDefinition/>
-                <ColumnDefinition Width="Auto" MinWidth="594"/>
+                <!-- Фиксированная ширина -->
             </Grid.ColumnDefinitions>
-            <Canvas Grid.Column="1" Grid.Row="3" Background="White" Grid.RowSpan="3"/>
+            <WrapPanel  Grid.Column="0" 
+    Grid.Row="1" 
+    Grid.RowSpan="2"
+    MaxWidth="250">
+                <Button Tag="Прямая" Click="Straight_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/straight.png"/>
+                <Button Tag="Прямоугольник" Click="Rectangle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/rectangle.png"/>
+                <Button Tag="Эллипс" Click="Ellipse_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/ellipse.png"/>
+                <Button Tag="Треугольник" Click="Ellipse_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/triangle.png"/>
+                <Button Tag="Ломаная" Click="Fractured_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/fractured.png"/>
+                <Button Tag="Круг" Click="Circle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/circle.png"/>
+            </WrapPanel>
+            <WrapPanel Grid.Column="1" 
+                Grid.Row="1" >
+                <Border Width="128" Height="128">
+                    <Grid>
+                        <!-- Фоновое изображение -->
+                        <Image Source="Images/panel.png" Stretch="Fill"/>
+                        <!-- Кнопки цветов с использованием нового стиля -->
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Red" Click="ColorButton_Click" Margin="9,44,99,64"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Orange" Click="ColorButton_Click" Margin="44,9,64,99"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Yellow" Click="ColorButton_Click" Margin="19,19,89,89"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Green" Click="ColorButton_Click" Margin="69,9,39,99"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Blue" Click="ColorButton_Click" Margin="94,9,14,99"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Indigo" Click="ColorButton_Click" Margin="98,34,10,74"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Black" Click="ColorButton_Click" Margin="98,69,10,39"/>
 
+                    </Grid>
+                </Border>
 
+                <!-- Дополнительные кнопки, например, заливка и отмена, можно оставить со стилем ShapeButtonStyle -->
+                <Button Style="{StaticResource ShapeButtonStyle}" 
+                    Content="Images/fill.png"
+                    Tag="Заливка"
+                    Margin="10,0"
+                    Click="FillButton_Click"/>
+                <Button Style="{StaticResource ShapeButtonStyle}" 
+                    Content="Images/undo.png"
+                    Tag="Отмена"
+                    Margin="10,0"
+                    Click="UndoButton_Click" Background="#FFDDDDDD"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                    <TextBlock Text="Толщина:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,0"
+               FontSize="14"/>
+                    <Slider x:Name="SliderWidth" 
+            Width="120" 
+            Minimum="1" 
+            Maximum="30"
+            Value="2"
+            Style="{StaticResource ModernSliderStyle}"
+            VerticalAlignment="Center" Height="68"/>
+                    <TextBlock Text="{Binding Value, ElementName=SliderWidth}"
+               VerticalAlignment="Center"
+               Margin="10,0,0,0"
+               Width="25"
+               TextAlignment="Center"
+               FontSize="14"/>
+                </StackPanel>
+            </WrapPanel>
+            <!-- Canvas, который показывает размер возможного холста. пользователь сможет создавать окна по размеру -->
+            <Canvas Grid.Column="1" Grid.Row="1" Background="White" Margin="0,139,0,0" Grid.RowSpan="2"/>
         </Grid>
     </Grid>
-
 </Window>
