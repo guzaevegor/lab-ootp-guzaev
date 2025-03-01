@@ -210,7 +210,7 @@
                 </StackPanel>
             </WrapPanel>
             <!-- Canvas, который показывает размер возможного холста. пользователь сможет создавать окна по размеру -->
-            <Canvas Grid.Column="1" Grid.Row="1" Background="White" Margin="0,139,0,0" Grid.RowSpan="2"/>
+            <Canvas x:Name="myCanvas" Grid.Column="1" Grid.Row="1" Background="White" Margin="0,139,0,0" Grid.RowSpan="2"/>
         </Grid>
     </Grid>
 </Window>

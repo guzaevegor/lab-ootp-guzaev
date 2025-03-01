@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static WpfApp1.ShapeBase;
 
 namespace WpfApp1
 {
@@ -23,6 +24,13 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
+           // DrawingController controller = new DrawingController();
+           // DrawingView view = new DrawingView(myCanvas); // например, передаем элемент Canvas
+
+            var circle = new CircleShape(80).Draw();
+            myCanvas.Children.Add(circle);
+            Canvas.SetLeft(circle, 50);
+            Canvas.SetTop(circle, 50);
         }
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
