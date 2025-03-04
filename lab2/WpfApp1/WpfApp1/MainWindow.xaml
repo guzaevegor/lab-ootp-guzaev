@@ -126,6 +126,10 @@
                   FontFamily="Hamburge-mous-tiv"  FontSize="14"
                   InputGestureText="Ctrl+S"
                   Click="SaveMenuItem_Click"/>
+                <MenuItem Header="Открыть плагин" x:Name="LoadPluginMenuItem"
+  FontFamily="Hamburge-mous-tiv"  FontSize="14"
+  InputGestureText="Ctrl+L"
+  Click="LoadPluginMenuItem_Click"/>
                 <Separator/>
                 <MenuItem Header="Выход" Click="ExitMenuItem_Click" FontSize="14"/>
             </MenuItem>
@@ -184,11 +188,17 @@
                     Tag="Заливка"
                     Margin="10,0"
                     Click="FillButton_Click"/>
+               
                 <Button Style="{StaticResource ShapeButtonStyle}" 
-                    Content="Images/undo.png"
-                    Tag="Отмена"
-                    Margin="10,0"
-                    Click="UndoButton_Click" Background="#FFDDDDDD"/>
+    Content="Images/undo.png"
+    Tag="Отмена"
+    Margin="10,0"
+    Click="UndoButton_Click" Background="#FFDDDDDD"/>
+                <Button Style="{StaticResource ShapeButtonStyle}" 
+     Content="Images/redo.png"
+     Tag="Верни"
+     Margin="10,0"
+     Click="RedoButton_Click" Background="#FFDDDDDD"/>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
                     <TextBlock Text="Толщина:" 
                VerticalAlignment="Center"

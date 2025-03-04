@@ -26,11 +26,11 @@ namespace WpfApp1
             InitializeComponent();
            // DrawingController controller = new DrawingController();
            // DrawingView view = new DrawingView(myCanvas); // например, передаем элемент Canvas
-
+           /*
             var circle = new CircleShape(80).Draw();
             myCanvas.Children.Add(circle);
             Canvas.SetLeft(circle, 50);
-            Canvas.SetTop(circle, 50);
+            Canvas.SetTop(circle, 50);*/
         }
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -94,6 +94,11 @@ namespace WpfApp1
         }
 
         private void ThicknessComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void RedoButton_Click(object sender, RoutedEventArgs e)
         {
 
         }

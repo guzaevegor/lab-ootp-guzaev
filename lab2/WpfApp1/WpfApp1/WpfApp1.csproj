@@ -138,5 +138,8 @@
   <ItemGroup>
     <Resource Include="Images\panel.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\redo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
