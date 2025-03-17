@@ -14,10 +14,8 @@ namespace WpfApp1
         }
 
         public void Render(IEnumerable<ShapeBase> shapes, ShapeBase previewShape = null)
-
         {
             Clear();
-
             // Рисуем все сохраненные фигуры
             foreach (var shape in shapes)
             {
@@ -32,6 +30,7 @@ namespace WpfApp1
                 canvas.Children.Add(previewUiShape);
             }
         }
+
 
         public void Clear()
         {

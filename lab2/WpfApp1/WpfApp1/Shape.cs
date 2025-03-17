@@ -49,14 +49,17 @@ namespace WpfApp1
 
             public override Shape Draw()
             {
-                return new Ellipse
+                var ellipse = new Ellipse
                 {
                     Width = Width,
                     Height = Height,
-                    Stroke = Brushes.Blue,
-                    StrokeThickness = 2,
-                    Fill = Brushes.LightBlue
+                    Stroke = new SolidColorBrush(StrokeColor),
+                    StrokeThickness = StrokeThickness,
+                    Fill = new SolidColorBrush(FillColor)
                 };
+                Canvas.SetLeft(ellipse, StartPoint.X);
+                Canvas.SetTop(ellipse, StartPoint.Y);
+                return ellipse;
             }
         }
 
@@ -121,6 +124,17 @@ namespace WpfApp1
 
                 return rectangle;
             }
+            public override void UpdateDrawing(Point newEndPoint)
+            {
+                EndPoint = newEndPoint;
+                Width = Math.Abs(EndPoint.X - StartPoint.X);
+                Height = Math.Abs(EndPoint.Y - StartPoint.Y);
+                TopLeft = new Point(
+                    Math.Min(StartPoint.X, EndPoint.X),
+                    Math.Min(StartPoint.Y, EndPoint.Y)
+                );
+            }
+
         }
 
 
@@ -148,14 +162,9 @@ namespace WpfApp1
         // Класс для треугольника
         public class TriangleShape : PolygonShapeBase
         {
-            public TriangleShape()
+            public TriangleShape(PointCollection points)
             {
-                Points = new PointCollection
-            {
-                new Point(50, 150),
-                new Point(150, 50),
-                new Point(250, 150)
-            };
+                Points = points;
             }
 
             public override Shape Draw()
@@ -163,12 +172,13 @@ namespace WpfApp1
                 return new Polygon
                 {
                     Points = Points,
-                    Stroke = Brushes.Green,
-                    StrokeThickness = 2,
-                    Fill = Brushes.LightGreen
+                    Stroke = new SolidColorBrush(StrokeColor),
+                    StrokeThickness = StrokeThickness,
+                    Fill = new SolidColorBrush(FillColor)
                 };
             }
         }
+
 
 
 
@@ -213,8 +223,8 @@ namespace WpfApp1
                     Y1 = Points[0].Y,
                     X2 = Points[1].X,
                     Y2 = Points[1].Y,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 2
+                    Stroke = new SolidColorBrush(StrokeColor),
+                    StrokeThickness = StrokeThickness
                 };
             }
         }

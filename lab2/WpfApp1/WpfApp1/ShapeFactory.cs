@@ -51,6 +51,17 @@ namespace WpfApp1
             var points = new System.Windows.Media.PointCollection { start, end, new Point(start.X, end.Y) };
             return new ShapeBase.PolygonShape(points);
         }
+        private ShapeBase CreateTriangle(Point start, Point end)
+        {
+            // Создаем точки для треугольника
+            var points = new PointCollection
+    {
+        start,
+        new Point(end.X, start.Y),
+        new Point((start.X + end.X) / 2, end.Y)
+    };
+            return new ShapeBase.TriangleShape(points);
+        }
 
         public ShapeBase CreateShape(ShapeType type, Point startPoint, Point endPoint)
         {
