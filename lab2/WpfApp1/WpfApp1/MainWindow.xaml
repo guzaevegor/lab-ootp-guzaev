@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="900"
-        MinWidth="900" MinHeight="450" FontFamily="Hamburge-mous-tiv" FontSize="16" FontWeight="Bold">
+        MinWidth="900" MinHeight="450" FontFamily="{StaticResource CustomFont}" FontSize="16" FontWeight="Bold">
     <Window.Resources>
         <Style x:Key="ShapeButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="80"/>
@@ -117,24 +117,24 @@
         </Grid.RowDefinitions>
         <!-- Main Menu -->
         <Menu Grid.Row="0">
-            <MenuItem Header="Файл" x:Name="FileMenu" FontFamily="Hamburge-mous-tiv" FontSize="14" FontWeight="Bold">
+            <MenuItem Header="Файл" x:Name="FileMenu" FontFamily="{StaticResource CustomFont}"  FontSize="14" FontWeight="Bold">
                 <MenuItem Header="Открыть" x:Name="OpenMenuItem"
                   InputGestureText="Ctrl+O"
-                  FontFamily="Hamburge-mous-tiv"  FontSize="14"
+                  FontFamily="{StaticResource CustomFont}"   FontSize="14"
                   Click="OpenMenuItem_Click"/>
                 <MenuItem Header="Сохранить" x:Name="SaveMenuItem"
-                  FontFamily="Hamburge-mous-tiv"  FontSize="14"
+                  FontFamily="{StaticResource CustomFont}"   FontSize="14"
                   InputGestureText="Ctrl+S"
                   Click="SaveMenuItem_Click"/>
                 <MenuItem Header="Открыть плагин" x:Name="LoadPluginMenuItem"
-  FontFamily="Hamburge-mous-tiv"  FontSize="14"
+  FontFamily="{StaticResource CustomFont}"   FontSize="14"
   InputGestureText="Ctrl+L"
   Click="LoadPluginMenuItem_Click"/>
                 <Separator/>
                 <MenuItem Header="Выход" Click="ExitMenuItem_Click" FontSize="14"/>
             </MenuItem>
-            <MenuItem Header="Помощь" FontFamily="Hamburge-mous-tiv"  FontSize="14" FontWeight="Bold">
-                <MenuItem Header="О программе" Click="AboutMenuItem_Click" FontSize="14" FontFamily="Hamburge-mous-tiv" />
+            <MenuItem Header="Помощь" FontFamily="{StaticResource CustomFont}"   FontSize="14" FontWeight="Bold">
+                <MenuItem Header="О программе" Click="AboutMenuItem_Click" FontSize="14" FontFamily="{StaticResource CustomFont}" />
             </MenuItem>
         </Menu>
 
