@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="900"
-        MinWidth="900" MinHeight="450" FontFamily="{StaticResource CustomFont}" FontSize="16" FontWeight="Bold">
+        Title="MainWindow" Height="500" Width="1000"
+        MinWidth="900" MinHeight="1000" FontFamily="{StaticResource CustomFont}" FontSize="16" FontWeight="Bold">
     <Window.Resources>
         <Style x:Key="ShapeButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="80"/>
@@ -83,9 +83,9 @@
             </Setter>
         </Style>
         <Style x:Key="ModernSliderStyle" TargetType="Slider">
-            <Setter Property="Background" Value="#FFE0E0E0"/>
-            <Setter Property="BorderBrush" Value="Gray"/>
-            <Setter Property="Foreground" Value="#FF0078D7"/>
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
@@ -142,8 +142,8 @@
         <Grid Grid.Row="1" Background="#FFE5E5E5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="139*"/>
-                <RowDefinition Height="276*"/>
+                <RowDefinition Height="158*"/>
+                <RowDefinition Height="807*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
@@ -160,7 +160,7 @@
                 <Button Tag="Прямая" Click="Straight_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/straight.png"/>
                 <Button Tag="Прямоугольник" Click="Rectangle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/rectangle.png"/>
                 <Button Tag="Эллипс" Click="Ellipse_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/ellipse.png"/>
-                <Button Tag="Треугольник" Click="Ellipse_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/triangle.png"/>
+                <Button Tag="Треугольник" Click="Triangle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/triangle.png"/>
                 <Button Tag="Ломаная" Click="Fractured_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/fractured.png"/>
                 <Button Tag="Круг" Click="Circle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/circle.png"/>
             </WrapPanel>
@@ -175,9 +175,10 @@
                         <Button Style="{StaticResource ColorButtonStyle}" Background="Orange" Click="ColorButton_Click" Margin="44,9,64,99"/>
                         <Button Style="{StaticResource ColorButtonStyle}" Background="Yellow" Click="ColorButton_Click" Margin="19,19,89,89"/>
                         <Button Style="{StaticResource ColorButtonStyle}" Background="Green" Click="ColorButton_Click" Margin="69,9,39,99"/>
-                        <Button Style="{StaticResource ColorButtonStyle}" Background="Blue" Click="ColorButton_Click" Margin="94,9,14,99"/>
-                        <Button Style="{StaticResource ColorButtonStyle}" Background="Indigo" Click="ColorButton_Click" Margin="98,34,10,74"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Blue" Click="ColorButton_Click" Margin="94,19,14,89"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="Indigo" Click="ColorButton_Click" Margin="98,44,10,64"/>
                         <Button Style="{StaticResource ColorButtonStyle}" Background="Black" Click="ColorButton_Click" Margin="98,69,10,39"/>
+                        <Button Style="{StaticResource ColorButtonStyle}" Background="White" Click="ColorButton_Click" Margin="79,94,29,14"/>
 
                     </Grid>
                 </Border>
@@ -188,7 +189,7 @@
                     Tag="Заливка"
                     Margin="10,0"
                     Click="FillButton_Click"/>
-               
+
                 <Button Style="{StaticResource ShapeButtonStyle}" 
     Content="Images/undo.png"
     Tag="Отмена"
@@ -199,28 +200,30 @@
      Tag="Верни"
      Margin="10,0"
      Click="RedoButton_Click" Background="#FFDDDDDD"/>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                    <TextBlock Text="Толщина:" 
-               VerticalAlignment="Center"
-               Margin="0,0,5,0"
-               FontSize="14"/>
-                    <Slider x:Name="SliderWidth" 
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Slider x:Name="thicknessSlider" 
+            ValueChanged="Slider_ValueChanged"
             Width="120" 
             Minimum="1" 
             Maximum="30"
             Value="2"
             Style="{StaticResource ModernSliderStyle}"
-            VerticalAlignment="Center" Height="68"/>
-                    <TextBlock Text="{Binding Value, ElementName=SliderWidth}"
+            VerticalAlignment="Center" 
+            Height="68"/>
+                    <TextBlock Text="{Binding Value, ElementName=thicknessSlider, StringFormat='{}{0:F1} пт'}"
                VerticalAlignment="Center"
                Margin="10,0,0,0"
-               Width="25"
+               Width="50"
                TextAlignment="Center"
                FontSize="14"/>
                 </StackPanel>
+                <RadioButton Content="Цвет линии" IsChecked="True" Checked="StrokeColorMode_Checked" Width="233" RenderTransformOrigin="0.52,0.775"/>
+                <RadioButton Content="Цвет заливки" Checked="FillColorMode_Checked" Margin="5"/>
+
             </WrapPanel>
+
             <!-- Canvas, который показывает размер возможного холста. пользователь сможет создавать окна по размеру -->
-            <Canvas x:Name="myCanvas" Grid.Column="1" Grid.Row="1" Background="White" Margin="0,139,0,0" Grid.RowSpan="2"/>
+            <Canvas x:Name="myCanvas" ClipToBounds="True" Grid.Column="1" Grid.Row="2" Background="White" Margin="0,3,0,0"/>
         </Grid>
     </Grid>
 </Window>

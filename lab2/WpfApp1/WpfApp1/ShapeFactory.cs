@@ -12,6 +12,7 @@ namespace WpfApp1
         Ellipse,
         Polyline,
         Polygon,
+        Triangle,
         Circle
     }
     class ShapeFactory
@@ -22,45 +23,58 @@ namespace WpfApp1
         {
             InitializeShapeCreators();
         }
-
         private void InitializeShapeCreators()
         {
             shapeCreators = new Dictionary<ShapeType, Func<Point, Point, ShapeBase>>
-            {
-                { ShapeType.Line, (start, end) => new ShapeBase.LineShape(start, end) },
-                { ShapeType.Rectangle, (start, end) => new ShapeBase.RectangleShape(start, end) },
-                { ShapeType.Ellipse, (start, end) =>
-                    new ShapeBase.EllipseShape(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y)) },
-                { ShapeType.Circle, (start, end) => {
-                    double radius = Math.Max(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
-                    return new ShapeBase.CircleShape(radius);
-                }},
-                { ShapeType.Polyline, CreatePolyline },
-                { ShapeType.Polygon, CreatePolygon }
-            };
+                {
+                    { ShapeType.Triangle, CreateTriangle },
+                    { ShapeType.Line, (start, end) => new LineShape(start, end) },
+                    { ShapeType.Rectangle, (start, end) => new RectangleShape(start, end) },
+                    { ShapeType.Ellipse, (start, end) => {
+                        var ellipse = new EllipseShape(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
+                        ellipse.StartPoint = start;
+                        ellipse.TopLeft = new Point(
+                            Math.Min(start.X, end.X),
+                            Math.Min(start.Y, end.Y)
+                        );
+                        return ellipse;
+                    }},
+                    { ShapeType.Circle, (start, end) => {
+                        double radius = Math.Max(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
+                        var circle = new CircleShape(radius);
+                        circle.StartPoint = start;
+                        circle.TopLeft = new Point(
+                            Math.Min(start.X, end.X),
+                            Math.Min(start.Y, end.Y)
+                        );
+                        return circle;
+                    }},
+                    { ShapeType.Polyline, CreatePolyline },
+                    { ShapeType.Polygon, CreatePolygon }
+                };
         }
+
+
 
         private ShapeBase CreatePolyline(Point start, Point end)
         {
             var points = new System.Windows.Media.PointCollection { start, end };
-            return new ShapeBase.PolylineShape(points);
+            return new PolylineShape(points);
         }
 
         private ShapeBase CreatePolygon(Point start, Point end)
         {
             var points = new System.Windows.Media.PointCollection { start, end, new Point(start.X, end.Y) };
-            return new ShapeBase.PolygonShape(points);
+            return new PolygonShape(points);
         }
         private ShapeBase CreateTriangle(Point start, Point end)
         {
-            // Создаем точки для треугольника
-            var points = new PointCollection
-    {
+            var points = new PointCollection {
         start,
-        new Point(end.X, start.Y),
-        new Point((start.X + end.X) / 2, end.Y)
+        new Point((start.X + end.X)/2, start.Y - Math.Abs(end.Y - start.Y)),
+        end
     };
-            return new ShapeBase.TriangleShape(points);
+            return new TriangleShape(points);
         }
 
         public ShapeBase CreateShape(ShapeType type, Point startPoint, Point endPoint)

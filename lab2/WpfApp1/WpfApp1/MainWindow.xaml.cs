@@ -32,13 +32,20 @@ namespace WpfApp1
             view.BindController(controller);
 
             // Инициализация UI-элементов
-            InitializeThicknessComboBox();
+            InitializeThicknessSlider();
+        }
+        private void InitializeThicknessSlider()
+        {
+            // Настройка min/max значений
+            thicknessSlider.Minimum = 1;
+            thicknessSlider.Maximum = 10;
+            thicknessSlider.Value = 1; // Начальное значение
+
+            // Добавляем обработчик события только после инициализации controller
+            thicknessSlider.ValueChanged += Slider_ValueChanged;
         }
 
-        private void InitializeThicknessComboBox()
-        {
-           
-        }
+
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -83,10 +90,14 @@ namespace WpfApp1
         {
             controller.SetShapeType(ShapeType.Ellipse);
         }
-
+        
         private void Straight_Click(object sender, RoutedEventArgs e)
         {
             controller.SetShapeType(ShapeType.Line);
+        }
+        private void Triangle_Click(object sender, RoutedEventArgs e)
+        {
+            controller.SetShapeType(ShapeType.Triangle);
         }
 
         private void Circle_Click(object sender, RoutedEventArgs e)
@@ -99,15 +110,60 @@ namespace WpfApp1
             controller.SetShapeType(ShapeType.Polyline);
         }
 
-        private void ColorButton_Click(object sender, RoutedEventArgs e)
-        {
+        private bool selectingStrokeColor = true;
 
+        private void PaletteColor_Click(object sender, RoutedEventArgs e)
+        {
+            Button colorButton = sender as Button;
+            if (colorButton != null)
+            {
+                SolidColorBrush brush = colorButton.Background as SolidColorBrush;
+                if (brush != null)
+                {
+                    if (selectingStrokeColor)
+                    {
+                        controller.SetStrokeColor(brush.Color);
+                        // Обновить фон кнопки выбора цвета линии
+                        colorButton.Background = new SolidColorBrush(brush.Color);
+                    }
+                    else
+                    {
+                        controller.SetFillColor(brush.Color);
+                        // Обновить фон кнопки выбора цвета заливки
+                        colorButton.Background = new SolidColorBrush(brush.Color);
+                    }
+                }
+            }
         }
+
 
         private void FillButton_Click(object sender, RoutedEventArgs e)
         {
+            // Переключаем режим заливки
+            bool newFillMode = !controller.IsFillMode();
+            controller.SetFillMode(newFillMode);
+
+            // Меняем внешний вид кнопки, чтобы показать, что режим активен
+            Button fillBtn = sender as Button;
+            if (fillBtn != null)
+            {
+                if (newFillMode)
+                {
+                    // Визуальное выделение кнопки при активном режиме
+                    fillBtn.BorderBrush = new SolidColorBrush(Colors.DarkBlue);
+                    fillBtn.BorderThickness = new Thickness(2);
+                }
+                else
+                {
+                    // Возврат к обычному виду при отключении режима
+                    fillBtn.BorderBrush = new SolidColorBrush(Colors.Gray);
+                    fillBtn.BorderThickness = new Thickness(1);
+                }
+            }
 
         }
+
+
 
         private void UndoButton_Click(object sender, RoutedEventArgs e)
         {
@@ -130,5 +186,44 @@ namespace WpfApp1
                 controller.LoadPlugin(openFileDialog.FileName);
             }
         }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (controller != null)
+            {
+                controller.SetStrokeThickness(e.NewValue);
+            }
+        }
+
+        private void StrokeColorMode_Checked(object sender, RoutedEventArgs e)
+        {
+            selectingStrokeColor = true;
+        }
+
+        private void FillColorMode_Checked(object sender, RoutedEventArgs e)
+        {
+            selectingStrokeColor = false;
+        }
+
+        private void ColorButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button colorButton = sender as Button;
+            if (colorButton != null)
+            {
+                SolidColorBrush brush = colorButton.Background as SolidColorBrush;
+                if (brush != null)
+                {
+                    if (selectingStrokeColor)
+                    {
+                        controller.SetStrokeColor(brush.Color);
+                    }
+                    else
+                    {
+                        controller.SetFillColor(brush.Color);
+                    }
+                }
+            }
+        }
+
     }
 }

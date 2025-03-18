@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace WpfApp1
@@ -36,19 +37,34 @@ namespace WpfApp1
         {
             canvas.Children.Clear();
         }
+        public void CaptureMouseForCanvas()
+        {
+            canvas.CaptureMouse();
+        }
 
         public void BindController(DrawingController controller)
         {
             this.controller = controller;
-
             canvas.MouseDown += (sender, e) =>
                 controller.HandleMouseDown(e.GetPosition(canvas));
-
             canvas.MouseMove += (sender, e) =>
                 controller.HandleMouseMove(e.GetPosition(canvas));
-
             canvas.MouseUp += (sender, e) =>
+            {
                 controller.HandleMouseUp(e.GetPosition(canvas));
+                ((UIElement)sender).ReleaseMouseCapture(); // Явно освобождаем захват мыши
+            };
+            canvas.MouseLeave += (sender, e) =>
+            {
+                if (controller.IsDrawing()) // необходимо добавить публичный метод IsDrawing() в контроллер
+                {
+                    controller.CancelDrawing(); // необходимо добавить этот метод в контроллер
+                    ((UIElement)sender).ReleaseMouseCapture();
+                }
+            };
         }
-    }
+
+    
+
+}
 }
