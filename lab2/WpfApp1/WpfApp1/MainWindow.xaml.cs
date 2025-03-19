@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static WpfApp1.ShapeBase;
 using Microsoft.Win32;
 
 namespace WpfApp1
@@ -25,13 +13,9 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-
-            // Инициализируем представление и контроллер
             view = new DrawingView(myCanvas);
             controller = new DrawingController(view);
             view.BindController(controller);
-
-            // Инициализация UI-элементов
             InitializeThicknessSlider();
         }
         private void InitializeThicknessSlider()
@@ -81,34 +65,15 @@ namespace WpfApp1
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void Rectangle_Click(object sender, RoutedEventArgs e)
+        private void ShapeButton_Click(object sender, RoutedEventArgs e)
         {
-            controller.SetShapeType(ShapeType.Rectangle);
+            Button button = sender as Button;
+            if (button != null && button.CommandParameter is string shapeType)
+            {
+                controller.SetShapeType(shapeType);
+            }
         }
 
-        private void Ellipse_Click(object sender, RoutedEventArgs e)
-        {
-            controller.SetShapeType(ShapeType.Ellipse);
-        }
-        
-        private void Straight_Click(object sender, RoutedEventArgs e)
-        {
-            controller.SetShapeType(ShapeType.Line);
-        }
-        private void Triangle_Click(object sender, RoutedEventArgs e)
-        {
-            controller.SetShapeType(ShapeType.Triangle);
-        }
-
-        private void Circle_Click(object sender, RoutedEventArgs e)
-        {
-            controller.SetShapeType(ShapeType.Circle);
-        }
-
-        private void Fractured_Click(object sender, RoutedEventArgs e)
-        {
-            controller.SetShapeType(ShapeType.Polyline);
-        }
 
         private bool selectingStrokeColor = true;
 

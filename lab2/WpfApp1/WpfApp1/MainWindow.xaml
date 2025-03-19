@@ -153,17 +153,19 @@
                 <ColumnDefinition/>
                 <!-- Фиксированная ширина -->
             </Grid.ColumnDefinitions>
-            <WrapPanel  Grid.Column="0" 
-    Grid.Row="1" 
-    Grid.RowSpan="2"
-    MaxWidth="250">
-                <Button Tag="Прямая" Click="Straight_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/straight.png"/>
-                <Button Tag="Прямоугольник" Click="Rectangle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/rectangle.png"/>
-                <Button Tag="Эллипс" Click="Ellipse_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/ellipse.png"/>
-                <Button Tag="Треугольник" Click="Triangle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/triangle.png"/>
-                <Button Tag="Ломаная" Click="Fractured_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/fractured.png"/>
-                <Button Tag="Круг" Click="Circle_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/circle.png"/>
+            <WrapPanel Grid.Column="0" 
+           Grid.Row="1" 
+           Grid.RowSpan="2"
+           MaxWidth="250"
+           Name="shapesPanel">
+                <Button Tag="Прямая" CommandParameter="Line" Click="ShapeButton_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/straight.png"/>
+                <Button Tag="Прямоугольник" CommandParameter="Rectangle" Click="ShapeButton_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/rectangle.png"/>
+                <Button Tag="Эллипс" CommandParameter="Ellipse" Click="ShapeButton_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/ellipse.png"/>
+                <Button Tag="Треугольник" CommandParameter="Triangle" Click="ShapeButton_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/triangle.png"/>
+                <Button Tag="Ломаная" CommandParameter="Polyline" Click="ShapeButton_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/fractured.png"/>
+                <Button Tag="Круг" CommandParameter="Circle" Click="ShapeButton_Click" Style="{StaticResource ShapeButtonStyle}" Content="Images/circle.png"/>
             </WrapPanel>
+
             <WrapPanel Grid.Column="1" 
                 Grid.Row="1" >
                 <Border Width="128" Height="128">

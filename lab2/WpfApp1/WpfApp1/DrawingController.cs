@@ -7,13 +7,14 @@ namespace WpfApp1
 {
     class DrawingController
     {
+        // Заменяем тип на строку
+        private string currentShapeType = "Line";
         private List<ShapeBase> shapes = new List<ShapeBase>();
         private Stack<List<ShapeBase>> undoStack = new Stack<List<ShapeBase>>();
         private Stack<List<ShapeBase>> redoStack = new Stack<List<ShapeBase>>();
         private DrawingView view;
         private ShapeBase previewShape;
         private ShapeFactory shapeFactory;
-        private ShapeType currentShapeType = ShapeType.Line;
         private bool isDrawing = false;
         private Color strokeColor = Colors.Black;
         private double strokeThickness = 1;
@@ -25,11 +26,20 @@ namespace WpfApp1
             this.shapeFactory = new ShapeFactory();
         }
 
-        public void SetShapeType(ShapeType type)
+        public void SetShapeType(string type)
         {
             currentShapeType = type;
         }
-
+        public void RegisterShapeCreator(string shapeName, ShapeCreator creator)
+        {
+            shapeFactory.RegisterShapeCreator(shapeName, creator);
+            // После регистрации обновляем представление
+            UpdateView();
+        }
+        public IEnumerable<string> GetAvailableShapeTypes()
+        {
+            return shapeFactory.GetAvailableShapeTypes();
+        }
         public void SetStrokeColor(Color color)
         {
             strokeColor = color;
@@ -157,10 +167,8 @@ namespace WpfApp1
 
             ApplyShapeProperties(finalShape);
             shapes.Add(finalShape);
-
             previewShape = null;
             isDrawing = false;
-
             view.Render(shapes);
             redoStack.Clear();
         }
@@ -216,27 +224,42 @@ namespace WpfApp1
         // Новый метод для создания угла
         public void CreateCornerForPolyline(Point position)
         {
-            if (currentShapeType == ShapeType.Polyline)
+            if (currentShapeType == "Polyline") // Теперь сравниваем строки
             {
                 cornerPoint = position;
                 isCornerMode = true;
 
                 // Можно добавить визуальный маркер точки угла
-                // Например, маленький красный круг
-                var marker = shapeFactory.CreateShape(ShapeType.Circle,
+                var marker = shapeFactory.CreateShape("Circle",
                     new Point(position.X - 3, position.Y - 3),
                     new Point(position.X + 3, position.Y + 3));
                 marker.StrokeColor = Colors.Red;
                 marker.FillColor = Colors.Red;
 
-                // Временно отображаем маркер
                 view.Render(shapes, marker);
             }
         }
 
         public void SerializeShapes(string filename) { /* Реализация сериализации */ }
 
-        public void LoadPlugin(string path) { /* Реализация загрузки плагинов */ }
+        public void LoadPlugin(string path)
+        {
+            try
+            {
+                // Здесь будет код загрузки плагинов
+                // Для примера просто показываем сообщение
+                MessageBox.Show($"Загрузка плагина: {path}");
+
+                // Тут должен быть код для загрузки сборки и поиска реализаций плагинов
+                // Assembly assembly = Assembly.LoadFrom(path);
+                // ...
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки плагина: {ex.Message}", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         public void UpdateView()
         {
