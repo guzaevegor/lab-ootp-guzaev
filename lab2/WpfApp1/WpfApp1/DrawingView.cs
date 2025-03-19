@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace WpfApp1
 {
@@ -45,26 +46,42 @@ namespace WpfApp1
         public void BindController(DrawingController controller)
         {
             this.controller = controller;
-            canvas.MouseDown += (sender, e) =>
-                controller.HandleMouseDown(e.GetPosition(canvas));
+
+            canvas.MouseDown += (sender, e) => {
+                var position = e.GetPosition(canvas);
+
+                // Проверяем, какая кнопка мыши была нажата
+                if (e.ChangedButton == MouseButton.Right)
+                {
+                    controller.CreateCornerForPolyline(position);
+                }
+                else
+                {
+                    // Стандартная обработка для левой кнопки
+                    controller.HandleMouseDown(position);
+                }
+            };
+
+            // Остальные обработчики без изменений
             canvas.MouseMove += (sender, e) =>
                 controller.HandleMouseMove(e.GetPosition(canvas));
-            canvas.MouseUp += (sender, e) =>
-            {
+
+            canvas.MouseUp += (sender, e) => {
                 controller.HandleMouseUp(e.GetPosition(canvas));
-                ((UIElement)sender).ReleaseMouseCapture(); // Явно освобождаем захват мыши
+                ((UIElement)sender).ReleaseMouseCapture();
             };
-            canvas.MouseLeave += (sender, e) =>
-            {
-                if (controller.IsDrawing()) // необходимо добавить публичный метод IsDrawing() в контроллер
+
+            canvas.MouseLeave += (sender, e) => {
+                if (controller.IsDrawing())
                 {
-                    controller.CancelDrawing(); // необходимо добавить этот метод в контроллер
+                    controller.CancelDrawing();
                     ((UIElement)sender).ReleaseMouseCapture();
                 }
             };
         }
 
-    
 
-}
+
+
+    }
 }

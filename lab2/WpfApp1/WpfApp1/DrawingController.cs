@@ -75,15 +75,19 @@ namespace WpfApp1
         public void CancelDrawing()
         {
             isDrawing = false;
+            isCornerMode = false;
+            cornerPoint = null;
             previewShape = null;
             view.Render(shapes);
         }
+
 
 
         public void HandleMouseDown(Point position)
         {
             if (isFillMode)
             {
+                // Код для режима заливки остается без изменений
                 // Проходим по всем фигурам от верхней к нижней
                 for (int i = shapes.Count - 1; i >= 0; i--)
                 {
@@ -99,6 +103,25 @@ namespace WpfApp1
                     }
                 }
             }
+            else if (isCornerMode && cornerPoint.HasValue)
+            {
+                // Если в режиме угла и есть точка угла, начинаем ломаную
+                isDrawing = true;
+                isCornerMode = false;
+
+                // Создаем полилинию с начальной точкой в углу
+                var points = new PointCollection { cornerPoint.Value, position };
+                previewShape = new PolylineShape(points);
+                ApplyShapeProperties(previewShape);
+                previewShape.StartPoint = cornerPoint.Value;
+                previewShape.EndPoint = position;
+
+                view.Render(shapes, previewShape);
+                view.CaptureMouseForCanvas();
+
+                // Сбрасываем точку угла после начала рисования
+                cornerPoint = null;
+            }
             else
             {
                 // Стандартное поведение для рисования
@@ -109,6 +132,7 @@ namespace WpfApp1
                 view.CaptureMouseForCanvas();
             }
         }
+
 
 
         public void HandleMouseMove(Point position)
@@ -184,6 +208,29 @@ namespace WpfApp1
                 undoStack.Push(new List<ShapeBase>(shapes));
                 shapes = redoStack.Pop();
                 view.Render(shapes);
+            }
+        }
+        private Point? cornerPoint;
+        private bool isCornerMode = false;
+
+        // Новый метод для создания угла
+        public void CreateCornerForPolyline(Point position)
+        {
+            if (currentShapeType == ShapeType.Polyline)
+            {
+                cornerPoint = position;
+                isCornerMode = true;
+
+                // Можно добавить визуальный маркер точки угла
+                // Например, маленький красный круг
+                var marker = shapeFactory.CreateShape(ShapeType.Circle,
+                    new Point(position.X - 3, position.Y - 3),
+                    new Point(position.X + 3, position.Y + 3));
+                marker.StrokeColor = Colors.Red;
+                marker.FillColor = Colors.Red;
+
+                // Временно отображаем маркер
+                view.Render(shapes, marker);
             }
         }
 
