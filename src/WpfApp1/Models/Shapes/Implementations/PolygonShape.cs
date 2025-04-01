@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media.Media3D;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows;
+using WpfApp1.Models.Shapes.Base;
+
+namespace WpfApp1.Models.Shapes.Implementations
+{
+   
+    // Класс для произвольного многоугольника
+    public class PolygonShape : PolygonShapeBase
+    {
+        public PolygonShape(PointCollection points)
+        {
+            Points = points;
+            if (points.Count > 0)
+            {
+                StartPoint = points[0];
+                EndPoint = points.Count > 1 ? points[1] : points[0];
+                UpdateFromPoints();
+            }
+        }
+
+        protected void UpdateFromPoints()
+        {
+            if (Points.Count == 0) return;
+
+            double minX = Points.Min(p => p.X);
+            double minY = Points.Min(p => p.Y);
+            double maxX = Points.Max(p => p.X);
+            double maxY = Points.Max(p => p.Y);
+
+            TopLeft = new Point(minX, minY);
+            Width = maxX - minX;
+            Height = maxY - minY;
+        }
+
+        public override void UpdateDrawing(Point newEndPoint)
+        {
+            EndPoint = newEndPoint;
+            base.UpdateDrawing(newEndPoint);
+
+            Points = new PointCollection {
+            StartPoint,
+            new Point(EndPoint.X, StartPoint.Y),
+            EndPoint,
+            new Point(StartPoint.X, EndPoint.Y)
+        };
+            UpdateFromPoints();
+        }
+
+        public override Shape Draw()
+        {
+            return new Polygon
+            {
+                Points = Points,
+                Stroke = new SolidColorBrush(StrokeColor),
+                StrokeThickness = StrokeThickness,
+                Fill = new SolidColorBrush(FillColor)
+            };
+        }
+    }
+
+}

@@ -88,13 +88,11 @@ namespace WpfApp1
                     if (selectingStrokeColor)
                     {
                         controller.SetStrokeColor(brush.Color);
-                        // Обновить фон кнопки выбора цвета линии
                         colorButton.Background = new SolidColorBrush(brush.Color);
                     }
                     else
                     {
                         controller.SetFillColor(brush.Color);
-                        // Обновить фон кнопки выбора цвета заливки
                         colorButton.Background = new SolidColorBrush(brush.Color);
                     }
                 }

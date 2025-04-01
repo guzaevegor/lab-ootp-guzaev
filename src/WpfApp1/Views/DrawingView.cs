@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using WpfApp1.Models.Shapes.Base;
 
 namespace WpfApp1
 {

@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using WpfApp1.Models.Shapes.Base;
+using WpfApp1.Models.Shapes.Implementations;
 
-namespace WpfApp1
+namespace WpfApp1.Factories
 {
     // Делегат для создания фигур
     public delegate ShapeBase ShapeCreator(Point startPoint, Point endPoint);
 
     class ShapeFactory
     {
+
         private Dictionary<string, ShapeCreator> shapeCreators;
 
         public ShapeFactory()

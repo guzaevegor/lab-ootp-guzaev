@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
+using WpfApp1.Factories;
+using WpfApp1.Models.Shapes.Base;
+using WpfApp1.Models.Shapes.Implementations;
 
 namespace WpfApp1
 {
