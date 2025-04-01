@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using WpfApp1.Factories;
@@ -170,6 +171,7 @@ namespace WpfApp1
             isDrawing = false;
             view.Render(shapes);
             redoStack.Clear();
+            
         }
 
         private void ApplyShapeProperties(ShapeBase shape)
@@ -204,9 +206,15 @@ namespace WpfApp1
             {
                 redoStack.Push(new List<ShapeBase>(shapes));
                 shapes = undoStack.Pop();
+                
+                if (shapes.LastOrDefault() is PolylineShape polyline)
+                {
+                    polyline.Points.Clear();
+                }
                 view.Render(shapes);
             }
         }
+
 
         public void Redo()
         {
