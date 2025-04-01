@@ -33,9 +33,9 @@ namespace WpfApp1
         {
             currentShapeType = type;
         }
-        public void RegisterShapeCreator(string shapeName, ShapeCreator creator)
+        public void RegisterShapeCreator(string shapeName, ShapeCreator creator, bool supportsCorners = false)
         {
-            shapeFactory.RegisterShapeCreator(shapeName, creator);
+            shapeFactory.RegisterShapeCreator(shapeName, creator, supportsCorners);
             // После регистрации обновляем представление
             UpdateView();
         }
@@ -94,8 +94,6 @@ namespace WpfApp1
             view.Render(shapes);
         }
 
-
-
         public void HandleMouseDown(Point position)
         {
             if (isFillMode)
@@ -145,8 +143,6 @@ namespace WpfApp1
                 view.CaptureMouseForCanvas();
             }
         }
-
-
 
         public void HandleMouseMove(Point position)
         {
@@ -227,7 +223,7 @@ namespace WpfApp1
         // Новый метод для создания угла
         public void CreateCornerForPolyline(Point position)
         {
-            if (currentShapeType == "Polyline") // Теперь сравниваем строки
+            if (shapeFactory.SupportsCorners(currentShapeType))
             {
                 cornerPoint = position;
                 isCornerMode = true;

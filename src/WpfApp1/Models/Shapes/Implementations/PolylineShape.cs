@@ -29,12 +29,10 @@ namespace WpfApp1.Models.Shapes.Implementations
         protected void UpdateFromPoints()
         {
             if (Points.Count == 0) return;
-
             double minX = Points.Min(p => p.X);
             double minY = Points.Min(p => p.Y);
             double maxX = Points.Max(p => p.X);
             double maxY = Points.Max(p => p.Y);
-
             TopLeft = new Point(minX, minY);
             Width = maxX - minX;
             Height = maxY - minY;
@@ -60,5 +58,4 @@ namespace WpfApp1.Models.Shapes.Implementations
             };
         }
     }
-
 }

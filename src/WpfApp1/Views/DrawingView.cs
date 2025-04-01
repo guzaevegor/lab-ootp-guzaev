@@ -34,11 +34,11 @@ namespace WpfApp1
             }
         }
 
-
         public void Clear()
         {
             canvas.Children.Clear();
         }
+
         public void CaptureMouseForCanvas()
         {
             canvas.CaptureMouse();
@@ -47,10 +47,8 @@ namespace WpfApp1
         public void BindController(DrawingController controller)
         {
             this.controller = controller;
-
             canvas.MouseDown += (sender, e) => {
                 var position = e.GetPosition(canvas);
-
                 // Проверяем, какая кнопка мыши была нажата
                 if (e.ChangedButton == MouseButton.Right)
                 {
@@ -62,16 +60,13 @@ namespace WpfApp1
                     controller.HandleMouseDown(position);
                 }
             };
-
             // Остальные обработчики без изменений
             canvas.MouseMove += (sender, e) =>
                 controller.HandleMouseMove(e.GetPosition(canvas));
-
             canvas.MouseUp += (sender, e) => {
                 controller.HandleMouseUp(e.GetPosition(canvas));
                 ((UIElement)sender).ReleaseMouseCapture();
             };
-
             canvas.MouseLeave += (sender, e) => {
                 if (controller.IsDrawing())
                 {
@@ -80,9 +75,5 @@ namespace WpfApp1
                 }
             };
         }
-
-
-
-
     }
 }

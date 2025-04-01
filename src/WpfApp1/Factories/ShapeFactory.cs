@@ -11,10 +11,22 @@ namespace WpfApp1.Factories
     // Делегат для создания фигур
     public delegate ShapeBase ShapeCreator(Point startPoint, Point endPoint);
 
+    // Класс для хранения метаданных о фигуре
+    public class ShapeInfo
+    {
+        public ShapeCreator Creator { get; }
+        public bool SupportsCorners { get; }
+
+        public ShapeInfo(ShapeCreator creator, bool supportsCorners = false)
+        {
+            Creator = creator;
+            SupportsCorners = supportsCorners;
+        }
+    }
+
     class ShapeFactory
     {
-
-        private Dictionary<string, ShapeCreator> shapeCreators;
+        private Dictionary<string, ShapeInfo> shapeInfos;
 
         public ShapeFactory()
         {
@@ -23,36 +35,36 @@ namespace WpfApp1.Factories
 
         private void InitializeShapeCreators()
         {
-            shapeCreators = new Dictionary<string, ShapeCreator>
-        {
-            { "Line", (start, end) => new LineShape(start, end) },
-            { "Rectangle", (start, end) => new RectangleShape(start, end) },
-            { "Ellipse", (start, end) => {
-                var ellipse = new EllipseShape(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
-                ellipse.StartPoint = start;
-                ellipse.TopLeft = new Point(
-                    Math.Min(start.X, end.X),
-                    Math.Min(start.Y, end.Y)
-                );
-                return ellipse;
-            }},
-            { "Circle", (start, end) => {
-                double radius = Math.Max(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
-                var circle = new CircleShape(radius);
-                circle.StartPoint = start;
-                circle.TopLeft = new Point(
-                    Math.Min(start.X, end.X),
-                    Math.Min(start.Y, end.Y)
-                );
-                return circle;
-            }},
-            { "Polyline", CreatePolyline },
-            { "Polygon", CreatePolygon },
-            { "Triangle", CreateTriangle }
-        };
+            shapeInfos = new Dictionary<string, ShapeInfo>
+            {
+                { "Line", new ShapeInfo((start, end) => new LineShape(start, end)) },
+                { "Rectangle", new ShapeInfo((start, end) => new RectangleShape(start, end)) },
+                { "Ellipse", new ShapeInfo((start, end) => {
+                    var ellipse = new EllipseShape(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
+                    ellipse.StartPoint = start;
+                    ellipse.TopLeft = new Point(
+                        Math.Min(start.X, end.X),
+                        Math.Min(start.Y, end.Y)
+                    );
+                    return ellipse;
+                }) },
+                { "Circle", new ShapeInfo((start, end) => {
+                    double radius = Math.Max(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
+                    var circle = new CircleShape(radius);
+                    circle.StartPoint = start;
+                    circle.TopLeft = new Point(
+                        Math.Min(start.X, end.X),
+                        Math.Min(start.Y, end.Y)
+                    );
+                    return circle;
+                }) },
+                { "Polyline", new ShapeInfo(CreatePolyline, true) },
+                { "Polygon", new ShapeInfo(CreatePolygon) },
+                { "Triangle", new ShapeInfo(CreateTriangle) }
+            };
         }
 
-        // Методы создания фигур остаются прежними
+        // Существующие методы создания фигур
         private ShapeBase CreatePolyline(Point start, Point end)
         {
             var points = new PointCollection { start, end };
@@ -68,28 +80,34 @@ namespace WpfApp1.Factories
         private ShapeBase CreateTriangle(Point start, Point end)
         {
             var points = new PointCollection {
-            start,
-            new Point((start.X + end.X)/2, start.Y - Math.Abs(end.Y - start.Y)),
-            end
-        };
+                start,
+                new Point((start.X + end.X)/2, start.Y - Math.Abs(end.Y - start.Y)),
+                end
+            };
             return new TriangleShape(points);
         }
 
-        // Добавляем метод для регистрации новых фигур
-        public void RegisterShapeCreator(string shapeName, ShapeCreator creator)
+        // Метод для проверки поддержки углов
+        public bool SupportsCorners(string shapeType)
         {
-            shapeCreators[shapeName] = creator;
+            return shapeInfos.TryGetValue(shapeType, out var info) && info.SupportsCorners;
         }
 
-        // Метод для получения списка доступных типов фигур
-        public IEnumerable<string> GetAvailableShapeTypes() => shapeCreators.Keys;
+        // Обновленный метод регистрации
+        public void RegisterShapeCreator(string shapeName, ShapeCreator creator, bool supportsCorners = false)
+        {
+            shapeInfos[shapeName] = new ShapeInfo(creator, supportsCorners);
+        }
 
-        // Метод для создания фигуры
+        // Получение типов фигур
+        public IEnumerable<string> GetAvailableShapeTypes() => shapeInfos.Keys;
+
+        // Создание фигуры
         public ShapeBase CreateShape(string shapeType, Point startPoint, Point endPoint)
         {
-            if (shapeCreators.TryGetValue(shapeType, out var creator))
+            if (shapeInfos.TryGetValue(shapeType, out var info))
             {
-                var shape = creator(startPoint, endPoint);
+                var shape = info.Creator(startPoint, endPoint);
                 shape.StartPoint = startPoint;
                 shape.EndPoint = endPoint;
                 return shape;
@@ -97,5 +115,4 @@ namespace WpfApp1.Factories
             throw new ArgumentException($"Unknown shape type: {shapeType}");
         }
     }
-
 }
