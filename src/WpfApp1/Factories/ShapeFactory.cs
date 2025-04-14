@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using WpfApp1.Models.Shapes.Base;
@@ -8,10 +7,8 @@ using WpfApp1.Models.Shapes.Implementations;
 
 namespace WpfApp1.Factories
 {
-    // Делегат для создания фигур
     public delegate ShapeBase ShapeCreator(Point startPoint, Point endPoint);
 
-    // Класс для хранения метаданных о фигуре
     public class ShapeInfo
     {
         public ShapeCreator Creator { get; }
@@ -64,7 +61,6 @@ namespace WpfApp1.Factories
             };
         }
 
-        // Существующие методы создания фигур
         private ShapeBase CreatePolyline(Point start, Point end)
         {
             var points = new PointCollection { start, end };
@@ -87,22 +83,18 @@ namespace WpfApp1.Factories
             return new TriangleShape(points);
         }
 
-        // Метод для проверки поддержки углов
         public bool SupportsCorners(string shapeType)
         {
             return shapeInfos.TryGetValue(shapeType, out var info) && info.SupportsCorners;
         }
 
-        // Обновленный метод регистрации
         public void RegisterShapeCreator(string shapeName, ShapeCreator creator, bool supportsCorners = false)
         {
             shapeInfos[shapeName] = new ShapeInfo(creator, supportsCorners);
         }
 
-        // Получение типов фигур
         public IEnumerable<string> GetAvailableShapeTypes() => shapeInfos.Keys;
 
-        // Создание фигуры
         public ShapeBase CreateShape(string shapeType, Point startPoint, Point endPoint)
         {
             if (shapeInfos.TryGetValue(shapeType, out var info))

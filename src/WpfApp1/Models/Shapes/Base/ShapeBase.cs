@@ -13,8 +13,8 @@ namespace WpfApp1.Models.Shapes.Base
         public abstract Shape Draw();
         public Point StartPoint { get; set; }
         public Point EndPoint { get; set; }
-        public double Width { get; protected set; }
-        public double Height { get; protected set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
         public Point TopLeft { get; set; }
 
         public virtual void UpdateDrawing(Point newEndPoint)

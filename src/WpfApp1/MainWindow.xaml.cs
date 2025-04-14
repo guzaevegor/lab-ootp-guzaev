@@ -20,40 +20,38 @@ namespace WpfApp1
         }
         private void InitializeThicknessSlider()
         {
-            // Настройка min/max значений
             thicknessSlider.Minimum = 1;
             thicknessSlider.Maximum = 10;
-            thicknessSlider.Value = 1; // Начальное значение
+            thicknessSlider.Value = 1; 
 
-            // Добавляем обработчик события только после инициализации controller
             thicknessSlider.ValueChanged += Slider_ValueChanged;
         }
-
-
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Файлы рисунков (*.drw)|*.drw|Все файлы (*.*)|*.*";
+            openFileDialog.Filter = "Файлы разметки (*.json)|*.json|Все файлы (*.*)|*.*";
+            openFileDialog.Title = "Открыть файл рисунка";
 
             if (openFileDialog.ShowDialog() == true)
             {
-                // Здесь нужно добавить метод десериализации в контроллер
-                // controller.DeserializeShapes(openFileDialog.FileName);
+                controller.DeserializeShapes(openFileDialog.FileName);
             }
         }
 
         private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Файлы рисунков (*.drw)|*.drw|Все файлы (*.*)|*.*";
+            saveFileDialog.Filter = "Файлы разметки (*.json)|*.json|Все файлы (*.*)|*.*";
+            saveFileDialog.Title = "Сохранить рисунок";
+            saveFileDialog.DefaultExt = "json";
+            saveFileDialog.AddExtension = true;
 
             if (saveFileDialog.ShowDialog() == true)
             {
                 controller.SerializeShapes(saveFileDialog.FileName);
             }
         }
-
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
@@ -102,23 +100,19 @@ namespace WpfApp1
 
         private void FillButton_Click(object sender, RoutedEventArgs e)
         {
-            // Переключаем режим заливки
             bool newFillMode = !controller.IsFillMode();
             controller.SetFillMode(newFillMode);
 
-            // Меняем внешний вид кнопки, чтобы показать, что режим активен
             Button fillBtn = sender as Button;
             if (fillBtn != null)
             {
                 if (newFillMode)
                 {
-                    // Визуальное выделение кнопки при активном режиме
                     fillBtn.BorderBrush = new SolidColorBrush(Colors.DarkBlue);
                     fillBtn.BorderThickness = new Thickness(2);
                 }
                 else
                 {
-                    // Возврат к обычному виду при отключении режима
                     fillBtn.BorderBrush = new SolidColorBrush(Colors.Gray);
                     fillBtn.BorderThickness = new Thickness(1);
                 }

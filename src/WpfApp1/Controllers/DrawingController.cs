@@ -6,12 +6,13 @@ using System.Windows.Media;
 using WpfApp1.Factories;
 using WpfApp1.Models.Shapes.Base;
 using WpfApp1.Models.Shapes.Implementations;
+using System.Text.Json;
+using System.IO;
 
 namespace WpfApp1
 {
     class DrawingController
     {
-        // Заменяем тип на строку
         private string currentShapeType = "Line";
         private List<ShapeBase> shapes = new List<ShapeBase>();
         private Stack<List<ShapeBase>> undoStack = new Stack<List<ShapeBase>>();
@@ -37,7 +38,6 @@ namespace WpfApp1
         public void RegisterShapeCreator(string shapeName, ShapeCreator creator, bool supportsCorners = false)
         {
             shapeFactory.RegisterShapeCreator(shapeName, creator, supportsCorners);
-            // После регистрации обновляем представление
             UpdateView();
         }
         public IEnumerable<string> GetAvailableShapeTypes()
@@ -99,17 +99,12 @@ namespace WpfApp1
         {
             if (isFillMode)
             {
-                // Код для режима заливки остается без изменений
-                // Проходим по всем фигурам от верхней к нижней
                 for (int i = shapes.Count - 1; i >= 0; i--)
                 {
                     var shape = shapes[i];
-                    // Проверяем, попадает ли точка в фигуру
                     if (IsPointInShape(shape, position))
                     {
-                        // Применяем цвет заливки
                         shape.FillColor = fillColor;
-                        // Перерисовываем
                         view.Render(shapes);
                         return;
                     }
@@ -117,11 +112,9 @@ namespace WpfApp1
             }
             else if (isCornerMode && cornerPoint.HasValue)
             {
-                // Если в режиме угла и есть точка угла, начинаем ломаную
                 isDrawing = true;
                 isCornerMode = false;
 
-                // Создаем полилинию с начальной точкой в углу
                 var points = new PointCollection { cornerPoint.Value, position };
                 previewShape = new PolylineShape(points);
                 ApplyShapeProperties(previewShape);
@@ -131,12 +124,10 @@ namespace WpfApp1
                 view.Render(shapes, previewShape);
                 view.CaptureMouseForCanvas();
 
-                // Сбрасываем точку угла после начала рисования
                 cornerPoint = null;
             }
             else
             {
-                // Стандартное поведение для рисования
                 isDrawing = true;
                 previewShape = shapeFactory.CreateShape(currentShapeType, position, position);
                 ApplyShapeProperties(previewShape);
@@ -228,7 +219,6 @@ namespace WpfApp1
         private Point? cornerPoint;
         private bool isCornerMode = false;
 
-        // Новый метод для создания угла
         public void CreateCornerForPolyline(Point position)
         {
             if (shapeFactory.SupportsCorners(currentShapeType))
@@ -236,7 +226,6 @@ namespace WpfApp1
                 cornerPoint = position;
                 isCornerMode = true;
 
-                // Можно добавить визуальный маркер точки угла
                 var marker = shapeFactory.CreateShape("Circle",
                     new Point(position.X - 3, position.Y - 3),
                     new Point(position.X + 3, position.Y + 3));
@@ -247,7 +236,6 @@ namespace WpfApp1
             }
         }
 
-        public void SerializeShapes(string filename) { /* Реализация сериализации */ }
 
         public void LoadPlugin(string path)
         {
@@ -272,5 +260,169 @@ namespace WpfApp1
         {
             view.Render(shapes);
         }
+        
+        public void SerializeShapes(string filename)
+        {
+            try
+            {
+                var serializableShapes = new List<Dictionary<string, object>>();
+
+                foreach (var shape in shapes)
+                {
+                    var shapeData = new Dictionary<string, object>
+                    {
+                        ["Type"] = shape.GetType().Name.Replace("Shape", ""),
+                        ["StartPoint"] = new { X = shape.StartPoint.X, Y = shape.StartPoint.Y },
+                        ["EndPoint"] = new { X = shape.EndPoint.X, Y = shape.EndPoint.Y },
+                        ["TopLeft"] = new { X = shape.TopLeft.X, Y = shape.TopLeft.Y },
+                        ["Width"] = shape.Width,
+                        ["Height"] = shape.Height,
+                        ["StrokeColor"] = new { R = shape.StrokeColor.R, G = shape.StrokeColor.G, B = shape.StrokeColor.B, A = shape.StrokeColor.A },
+                        ["FillColor"] = new { R = shape.FillColor.R, G = shape.FillColor.G, B = shape.FillColor.B, A = shape.FillColor.A },
+                        ["StrokeThickness"] = shape.StrokeThickness
+                    };
+
+                    if (shape is PolylineShape polyline)
+                    {
+                        var points = new List<object>();
+                        foreach (var point in polyline.Points)
+                        {
+                            points.Add(new { X = point.X, Y = point.Y });
+                        }
+                        shapeData["Points"] = points;
+                    }
+                    else if (shape is PolygonShape polygon)
+                    {
+                        var points = new List<object>();
+                        foreach (var point in polygon.Points)
+                        {
+                            points.Add(new { X = point.X, Y = point.Y });
+                        }
+                        shapeData["Points"] = points;
+                    }
+                    else if (shape is TriangleShape triangle)
+                    {
+                        var points = new List<object>();
+                        foreach (var point in triangle.Points)
+                        {
+                            points.Add(new { X = point.X, Y = point.Y });
+                        }
+                        shapeData["Points"] = points;
+                    }
+
+                    serializableShapes.Add(shapeData);
+                }
+
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string json = JsonSerializer.Serialize(serializableShapes, options);
+                File.WriteAllText(filename, json);
+                MessageBox.Show("Рисунок успешно сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public void DeserializeShapes(string filename)
+        {
+            try
+            {
+                if (!File.Exists(filename))
+                {
+                    MessageBox.Show("Файл не найден", "Ошибка",
+                                   MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                string json = File.ReadAllText(filename);
+                var shapeDatas = JsonSerializer.Deserialize<List<JsonElement>>(json);
+
+                if (shapeDatas == null || !shapeDatas.Any())
+                {
+                    MessageBox.Show("В файле не найдены фигуры", "Предупреждение",
+                                   MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                SaveStateForUndo();
+
+                shapes.Clear();
+
+                foreach (var shapeData in shapeDatas)
+                {
+                    string typeName = shapeData.GetProperty("Type").GetString();
+                    Point startPoint = ExtractPoint(shapeData.GetProperty("StartPoint"));
+                    Point endPoint = ExtractPoint(shapeData.GetProperty("EndPoint"));
+
+                    ShapeBase shape = null;
+
+                    if (typeName == "Polyline" || typeName == "Polygon" || typeName == "Triangle")
+                    {
+                        var pointCollection = new PointCollection();
+
+                        if (shapeData.TryGetProperty("Points", out JsonElement pointsElement))
+                        {
+                            foreach (var point in pointsElement.EnumerateArray())
+                            {
+                                pointCollection.Add(ExtractPoint(point));
+                            }
+                        }
+
+                        if (typeName == "Polyline")
+                            shape = new PolylineShape(pointCollection);
+                        else if (typeName == "Polygon")
+                            shape = new PolygonShape(pointCollection);
+                        else if (typeName == "Triangle")
+                            shape = new TriangleShape(pointCollection);
+                    }
+                    else
+                    {
+                        shape = shapeFactory.CreateShape(typeName, startPoint, endPoint);
+                    }
+
+                    if (shape != null)
+                    {
+                        shape.StartPoint = startPoint;
+                        shape.EndPoint = endPoint;
+                        shape.TopLeft = ExtractPoint(shapeData.GetProperty("TopLeft"));
+                        shape.Width = shapeData.GetProperty("Width").GetDouble();
+                        shape.Height = shapeData.GetProperty("Height").GetDouble();
+                        shape.StrokeColor = ExtractColor(shapeData.GetProperty("StrokeColor"));
+                        shape.FillColor = ExtractColor(shapeData.GetProperty("FillColor"));
+                        shape.StrokeThickness = shapeData.GetProperty("StrokeThickness").GetDouble();
+
+                        shapes.Add(shape);
+                    }
+                }
+
+                view.Render(shapes);
+                redoStack.Clear();
+                MessageBox.Show("Рисунок успешно загружен", "Загрузка", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке: {ex.Message}", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private Point ExtractPoint(JsonElement element)
+        {
+            double x = element.GetProperty("X").GetDouble();
+            double y = element.GetProperty("Y").GetDouble();
+            return new Point(x, y);
+        }
+
+        private Color ExtractColor(JsonElement element)
+        {
+            byte r = element.GetProperty("R").GetByte();
+            byte g = element.GetProperty("G").GetByte();
+            byte b = element.GetProperty("B").GetByte();
+            byte a = element.GetProperty("A").GetByte();
+            return Color.FromArgb(a, r, g, b);
+        }
+
     }
-}
+    }
