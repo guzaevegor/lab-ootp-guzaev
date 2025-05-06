@@ -49,7 +49,6 @@ namespace WpfApp1
             this.controller = controller;
             canvas.MouseDown += (sender, e) => {
                 var position = e.GetPosition(canvas);
-                // Проверяем, какая кнопка мыши была нажата
                 if (e.ChangedButton == MouseButton.Right)
                 {
                     controller.CreateCornerForPolyline(position);

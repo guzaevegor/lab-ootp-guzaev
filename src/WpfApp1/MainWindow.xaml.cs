@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -17,12 +17,29 @@ namespace WpfApp1
             controller = new DrawingController(view);
             view.BindController(controller);
             InitializeThicknessSlider();
+
+            controller.PluginLoaded += Controller_PluginLoaded;
         }
+        private void Controller_PluginLoaded(object sender, DrawingController.PluginEventArgs e)
+        {
+            Button newShapeButton = new Button
+            {
+                Tag = e.ShapeName,
+                CommandParameter = e.ShapeName,
+                Style = (Style)FindResource("ShapeButtonStyle"),
+                Content = "Images/plugin.png"
+            };
+
+            newShapeButton.Click += ShapeButton_Click;
+
+            shapesPanel.Children.Add(newShapeButton);
+        }
+
         private void InitializeThicknessSlider()
         {
             thicknessSlider.Minimum = 1;
             thicknessSlider.Maximum = 10;
-            thicknessSlider.Value = 1; 
+            thicknessSlider.Value = 1;
 
             thicknessSlider.ValueChanged += Slider_ValueChanged;
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -8,6 +8,7 @@ using WpfApp1.Models.Shapes.Base;
 using WpfApp1.Models.Shapes.Implementations;
 using System.Text.Json;
 using System.IO;
+using System.Reflection;
 
 namespace WpfApp1
 {
@@ -162,7 +163,7 @@ namespace WpfApp1
             isDrawing = false;
             view.Render(shapes);
             redoStack.Clear();
-            
+
         }
 
         private void ApplyShapeProperties(ShapeBase shape)
@@ -197,7 +198,7 @@ namespace WpfApp1
             {
                 redoStack.Push(new List<ShapeBase>(shapes));
                 shapes = undoStack.Pop();
-                
+
                 if (shapes.LastOrDefault() is PolylineShape polyline)
                 {
                     polyline.Points.Clear();
@@ -241,26 +242,67 @@ namespace WpfApp1
         {
             try
             {
-                // Здесь будет код загрузки плагинов
-                // Для примера просто показываем сообщение
-                MessageBox.Show($"Загрузка плагина: {path}");
+                // Загрузка сборки
+                Assembly assembly = Assembly.LoadFrom(path);
 
-                // Тут должен быть код для загрузки сборки и поиска реализаций плагинов
-                // Assembly assembly = Assembly.LoadFrom(path);
-                // ...
+                // Поиск типов, реализующих IShapePlugin
+                bool pluginFound = false;
+                foreach (Type type in assembly.GetTypes())
+                {
+                    if (typeof(IShapePlugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                    {
+                        // Создание экземпляра плагина
+                        IShapePlugin plugin = (IShapePlugin)Activator.CreateInstance(type);
+
+                        // Регистрация создателя фигуры
+                        RegisterShapeCreator(plugin.ShapeName, plugin.GetShapeCreator());
+
+                        MessageBox.Show($"Плагин {plugin.ShapeName} успешно загружен", "Успех",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        pluginFound = true;
+
+                        // Запускаем событие для обновления UI
+                        PluginLoaded?.Invoke(this, new PluginEventArgs { ShapeName = plugin.ShapeName });
+                    }
+                }
+
+                if (!pluginFound)
+                {
+                    MessageBox.Show("В сборке не найдены плагины, реализующие IShapePlugin", "Предупреждение",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                string errorDetails = "Детали ошибок:\n";
+                foreach (var loaderEx in ex.LoaderExceptions)
+                {
+                    errorDetails += loaderEx.Message + "\n";
+                }
+
+                MessageBox.Show($"Ошибка загрузки плагина: {ex.Message}\n{errorDetails}", "Ошибка",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки плагина: {ex.Message}", "Ошибка",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                              MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        // Событие для обновления UI
+        public event EventHandler<PluginEventArgs> PluginLoaded;
+        public class PluginEventArgs : EventArgs
+        {
+            public string ShapeName { get; set; }
         }
 
         public void UpdateView()
         {
             view.Render(shapes);
         }
-        
+
         public void SerializeShapes(string filename)
         {
             try
@@ -425,4 +467,4 @@ namespace WpfApp1
         }
 
     }
-    }
+}
